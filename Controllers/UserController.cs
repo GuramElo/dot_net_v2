@@ -36,5 +36,26 @@ namespace Reddit.Controllers
         {
             return await _context.Users.ToListAsync();
         }
+        // POST: api/Users/5/Communities/5/Join
+        [HttpPost("{userId}/Communities/{communityId}/Join")]
+        public async Task<IActionResult> JoinCommunity(int userId, int communityId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            var community = await _context.Communities.FindAsync(communityId);
+            if (community == null)
+            {
+                return NotFound("Community not found.");
+            }
+
+            user.SubscribedCommunities.Add(community);
+            await _context.SaveChangesAsync();
+
+            return Ok("User joined community successfully.");
+        }
     }
 }
